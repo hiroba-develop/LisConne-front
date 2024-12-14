@@ -1,0 +1,17 @@
+﻿version: "3.8"
+
+services:
+  frontend:
+    image: lisconne-front
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app:cached
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=100
+      - CHOKIDAR_BINARY_INTERVAL=300
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+    restart: always
