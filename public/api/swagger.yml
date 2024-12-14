@@ -54,6 +54,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoginResponse'
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
         '500':
           description: Internal Server Error
           $ref: '#/components/responses/InternalServerError'
@@ -62,7 +68,7 @@ paths:
       tags:
         - auth
       summary: パスワード再設定用のリンクを送信
-      description: Add a new pet to the store
+      description: ユーザーのメールアドレスを入力して、パスワード再設定用のリンクを送信します。
       operationId: sendResetPasswordLink
       requestBody:
         $ref: '#/components/requestBodies/ResetPasswordRequest'
@@ -70,12 +76,16 @@ paths:
       responses:
         '200':
           description: Successful operation
+          $ref: '#/components/responses/SuccessfulOperation'
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
   /auth/reset-password/confirm:
     post:
       tags:
@@ -89,12 +99,16 @@ paths:
       responses:
         '200':
           description: Successful operation
+          $ref: '#/components/responses/SuccessfulOperation'
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
   /orders/:
     get:
       tags:
@@ -107,12 +121,16 @@ paths:
       responses:
         '200':
           description: Successful operation
+
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
   /orders/{OrderID}:
     patch:
       tags:
@@ -129,11 +147,14 @@ paths:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
     get:
       tags:
         - orders
@@ -147,18 +168,21 @@ paths:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
   /orders/inport/:
     post:
       tags:
         - orders
       summary: 受注分析データをアップロード
       description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
-      operationId: findPetsByTags
+      operationId: InportOrdersData
       parameters:
         - $ref: '#/components/parameters/CompanyID'
       requestBody:
@@ -167,29 +191,35 @@ paths:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
     get:
       tags:
         - orders
       summary: 受注分析データテンプレートをダウンロード
       description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
-      operationId: findPetsByTags
+      operationId: ExportOrdersTemplate
       parameters:
         - $ref: '#/components/parameters/CompanyID'
       responses:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
-  /orders/{id}/export:
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /orders/{OrderID}/export:
     get:
       tags:
         - orders
@@ -203,11 +233,14 @@ paths:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
   /corporations/:
     get:
       tags:
@@ -219,12 +252,19 @@ paths:
       responses:
         '200':
           description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CorporateListArray'
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
     post:
       tags:
         - corporations
@@ -245,11 +285,14 @@ paths:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
   /corporations/seach/:
     get:
       tags: 
@@ -274,11 +317,14 @@ paths:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
   /corporations/inport/:
     post:
       tags:
@@ -293,29 +339,35 @@ paths:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
     get:
       tags:
         - corporations
       summary: 企業リストcsvテンプレートをダウンロード ※NG企業にも利用
       description: Place a new order in the store
-      operationId: placeOrder
+      operationId: exportCorporateListTemplate
       parameters:
         - $ref: '#/components/parameters/CompanyID'
       responses:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
-  /corporations/{id}:
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /corporations/{CorporateListID}:
     patch:
       tags:
         - corporations
@@ -324,17 +376,21 @@ paths:
       operationId: getOrderById
       parameters:
         - $ref: '#/components/parameters/CompanyID'
+        - $ref: '#/components/parameters/CorporateListID'
       requestBody:
         $ref: '#/components/requestBodies/UpdateNameAndMemo'
       responses:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
     get:
       tags:
         - corporations
@@ -343,17 +399,20 @@ paths:
       operationId: getOrderById
       parameters:
         - $ref: '#/components/parameters/CompanyID'
-        - $ref: '#/components/parameters/CoporateListID'
+        - $ref: '#/components/parameters/CorporateListID'
       responses:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
-  /corporations/{id}/export:
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /corporations/{CorporateListID}/export:
     get:
       tags:
         - corporations
@@ -362,17 +421,20 @@ paths:
       operationId: createUser
       parameters:
         - $ref: '#/components/parameters/CompanyID'
-        - $ref: '#/components/parameters/CoporateListID'
+        - $ref: '#/components/parameters/CorporateListID'
       responses:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
-  /corporations/detail/{id}:
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /corporations/detail/{CorporateID}:
     get:
       tags:
         - corporations
@@ -381,16 +443,19 @@ paths:
       operationId: createUsersWithListInput
       parameters:
         - $ref: '#/components/parameters/CompanyID'
-        - $ref: '#/components/parameters/CoporateID'
+        - $ref: '#/components/parameters/CorporateID'
       responses:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
   /optout/:
     post:
       tags:
@@ -400,58 +465,61 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CompanyID'
       requestBody:
-        $ref: '#/components/requestBodies/RemoveNGCoporates'
+        $ref: '#/components/requestBodies/RemoveNGCorporates'
       responses:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
     get:
       tags:
         - optout
       summary: NG企業一覧取得
       description: Place a new order in the store
-      operationId: placeOrder
+      operationId: getOptoutList
       parameters:
         - $ref: '#/components/parameters/CompanyID'
       responses:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
-  /optout/{id}:
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /optout/{CorporateID}:
     delete:
       tags:
         - optout
       summary: NG企業一覧から削除
       description: For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.
-      operationId: getOrderById
+      operationId: removeFromOptoutList
       parameters:
         - $ref: '#/components/parameters/CompanyID'
-        - name: CoporateID
-          in: path
-          required: true
-          description: 企業データの一意の識別子
-          schema:
-            type: integer
-            example: 123
+        - $ref: '#/components/parameters/CorporateID'
       responses:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
   /messages:
     get:
       tags:
@@ -488,6 +556,7 @@ paths:
           description: Pet not found
         '422':
           description: Validation exception
+  /messages/{MessageID}:
     delete:
       tags:
         - messages
@@ -507,11 +576,14 @@ paths:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
   /approach:
     get:
       tags:
@@ -550,7 +622,7 @@ paths:
           schema:
             type: integer
             example: 1
-        - name: coporate_list_id
+        - name: corporate_list_id
           in: query
           required: false
           description: 企業名
@@ -568,11 +640,14 @@ paths:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
     post: 
       tags:
         - approach
@@ -587,7 +662,7 @@ paths:
             schema:
               type: object
               properties:
-                coporate_list_id:
+                corporate_list_id:
                   type: array
                   items:
                     type: integer
@@ -604,19 +679,183 @@ paths:
                   type: integer
                   example: 1
               required:
-                - coporate_list_id
+                - corporate_list_id
                 - optout_list_id
                 - message_id
       responses:
         '200':
           description: Successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
 components:
+  parameters:
+    CompanyID:
+      name: CompanyID
+      in: header
+      required: true
+      description: 所属会社の一意の識別子
+      schema:
+        type: integer
+        example: 123
+    OrderID:
+      name: OrderID
+      in: path
+      required: true
+      description: 受注データの一意の識別子
+      schema:
+        type: integer
+        example: 123
+    CorporateListID:
+      name: CorporateListID
+      in: path
+      required: true
+      description: 企業リストデータの一意の識別子
+      schema:
+        type: integer
+        example: 123
+    CorporateID:
+      name: CorporateID
+      in: path
+      required: true
+      description: 企業データの一意の識別子
+      schema:
+        type: integer
+        example: 123
+    CorporateNumber:
+      name: corporate_number
+      in: query
+      required: false
+      description: 企業番号
+      schema:
+        type: integer
+      example: 123
+
+    CorporateName:
+      name: corporate_name
+      in: query
+      required: false
+      description: 企業名
+      schema:
+        type: string
+      example: 株式会社test
+
+    SalesCode:
+      name: sales_code
+      in: query
+      required: false
+      description: 売上
+      schema:
+        type: array
+        items:
+          type: integer
+      example: [3, 6]
+
+    EmployeeNumberCode:
+      name: employee_number_code
+      in: query
+      required: false
+      description: 従業員数
+      schema:
+        type: array
+        items:
+          type: integer
+      example: [4, 8]
+
+    EstablishYear:
+      name: establish_year
+      in: query
+      required: false
+      description: 設立年
+      schema:
+        type: array
+        items:
+          type: integer
+      example: [2, 6]
+
+    IndustryCode:
+      name: industry_code
+      in: query
+      required: false
+      description: 業種コード
+      schema:
+        type: array
+        items:
+          type: integer
+      example: [1, 6]
+
+    PrefectureCode:
+      name: prefecture_code
+      in: query
+      required: false
+      description: 都道府県コード
+      schema:
+        type: array
+        items:
+          type: integer
+        maxLength: 2
+      example: [3, 8]
+
+    CapitalCode:
+      name: capital_code
+      in: query
+      required: false
+      description: 資本金
+      schema:
+        type: array
+        items:
+          type: integer
+      example: [1,5]
+
+    ScenarioCode:
+      name: scenario_code
+      in: query
+      required: false
+      description: シナリオコード
+      schema:
+        type: array
+        items:
+          type: integer
+      example: [3,8]
+
+    RecruitCode:
+      name: recuit_code
+      in: query
+      required: false
+      description: 採用コード
+      schema:
+        type: array
+        items:
+          type: integer
+      example: [6,9]
+
+    AverageAgeCode:
+      name: average_age_code
+      in: query
+      required: false
+      description: 平均年齢
+      schema:
+        type: array
+        items:
+          type: integer
+      example: [1,5]
+
+    PvCountCode:
+      name: pv_count_code
+      in: query
+      required: false
+      description: PV数
+      schema:
+        type: array
+        items:
+          type: integer
+      example: [2,3]
   requestBodies:
     LoginRequest:
       content:
@@ -679,209 +918,76 @@ components:
               - csvData
             example:
               csvData: "Q29sdW1uMSxDb2x1bW4yLENvbHVtbjMKRGF0YTEsRGF0YTIsRGF0YTMK"
-    RemoveNGCoporates:
+    RemoveNGCorporates:
       content:
         application/json:
           schema:
             type: object
             properties:
-              coporateid:
+              corporateid:
                 type: integer
             required:
-              - coporateid
+              - corporateid
             example:
-              coporateid: 53
+              corporateid: 53
     CreateMessage:
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/MessageDetails'
-  parameters:
-    CompanyID:
-      name: CompanyID
-      in: header
-      required: true
-      description: 所属会社の一意の識別子
-      schema:
-        type: integer
-        example: 123
-    OrderID:
-      name: OrderID
-      in: path
-      required: true
-      description: 受注データの一意の識別子
-      schema:
-        type: integer
-        example: 123
-    CoporateListID:
-      name: CorporateListID
-      in: path
-      required: true
-      description: 企業リストデータの一意の識別子
-      schema:
-        type: integer
-        example: 123
-    CoporateID:
-      name: CorporateID
-      in: path
-      required: true
-      description: 企業データの一意の識別子
-      schema:
-        type: integer
-        example: 123
-    CorporateNumber:
-      name: corporate_number
-      in: query
-      required: false
-      description: 企業番号
-      schema:
-        type: string
-      example:
-        $ref: '#/components/examples/CorporateNumberExample'
-
-    CorporateName:
-      name: corporate_name
-      in: query
-      required: false
-      description: 企業名
-      schema:
-        type: string
-      example:
-        $ref: '#/components/examples/CorporateNameExample'
-
-    SalesCode:
-      name: sales_code
-      in: query
-      required: false
-      description: 売上
-      schema:
-        type: array
-        items:
-          type: integer
-      example:
-        $ref: '#/components/examples/SalesCodeExample'
-
-    EmployeeNumberCode:
-      name: employee_number_code
-      in: query
-      required: false
-      description: 従業員数
-      schema:
-        type: array
-        items:
-          type: integer
-      example:
-        $ref: '#/components/examples/EmployeeNumberCodeExample'
-
-    EstablishYear:
-      name: establish_year
-      in: query
-      required: false
-      description: 設立年
-      schema:
-        type: array
-        items:
-          type: integer
-      example:
-        $ref: '#/components/examples/EstablishYearExample'
-
-    IndustryCode:
-      name: industry_code
-      in: query
-      required: false
-      description: 業種コード
-      schema:
-        type: array
-        items:
-          type: integer
-      example:
-        $ref: '#/components/examples/IndustryCodeExample'
-
-    PrefectureCode:
-      name: prefecture_code
-      in: query
-      required: false
-      description: 都道府県コード
-      schema:
-        type: array
-        items:
-          type: integer
-        maxLength: 2
-      example:
-        $ref: '#/components/examples/PrefectureCodeExample'
-
-    CapitalCode:
-      name: capital_code
-      in: query
-      required: false
-      description: 資本金
-      schema:
-        type: array
-        items:
-          type: integer
-      example:
-        $ref: '#/components/examples/CapitalCodeExample'
-
-    ScenarioCode:
-      name: scenario_code
-      in: query
-      required: false
-      description: シナリオコード
-      schema:
-        type: array
-        items:
-          type: integer
-      example:
-        $ref: '#/components/examples/ScenarioCodeExample'
-
-    RecruitCode:
-      name: recuit_code
-      in: query
-      required: false
-      description: 採用コード
-      schema:
-        type: array
-        items:
-          type: integer
-      example:
-        $ref: '#/components/examples/RecruitCodeExample'
-
-    AverageAgeCode:
-      name: average_age_code
-      in: query
-      required: false
-      description: 平均年齢
-      schema:
-        type: array
-        items:
-          type: integer
-      example:
-        $ref: '#/components/examples/AverageAgeCodeExample'
-
-    PvCountCode:
-      name: pv_count_code
-      in: query
-      required: false
-      description: PV数
-      schema:
-        type: array
-        items:
-          type: integer
-      example:
-        $ref: '#/components/examples/PvCountCodeExample'
   responses:
-    InternalServerError:
-      description: サーバー内部エラー
+    SuccessfulOperation:
+      description: 成功したリクエストが送信された場合に返されるエラーメッセージ
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              message:
-                type: string
-                description: エラーメッセージ
-                example: "サーバーエラーが発生しました。管理者にお問い合わせください。"
+            $ref: '#/components/schemas/ResponseStatus'
+            example:
+              code: 200
+              message: "Successful operation"
+    BadRequestError:
+      description: "無効なリクエストが送信された場合に返されるエラーメッセージ"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseStatus'
+            example:
+              code: 400
+              message: "BadRequest"
+    NotAuthorizedError:
+      description: "ユーザーが認証されていない場合に返されるエラーメッセージ"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseStatus'
+            example:
+              code: 401
+              message: "Not Authorized"
+    InternalServerError:
+      description: サーバー内部でエラーが発生した場合に返されるエラーメッセージ
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseStatus'
+            example:
+              code: 500
+              message: "Internal Server Error"  
+  examples:
+    LoginRequest:
+      value:
+        username: example@hiroba1931.co.jp
+        email: password123
   schemas:
+    ResponseStatus:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
     LoginRequest:
       type: object
       required:
@@ -898,61 +1004,118 @@ components:
         company_id:
           type: string
           description: 所属会社の一意の識別子
-          example: 123
     MessageDetails:
       type: object
       properties:
         lastName:
           type: string
           description: 姓
-          example: 山田
         firstName:
           type: string
           description: 名
-          example: 太郎
         lastNameKana:
           type: string
           description: 姓（かな）
-          example: やまだ
         firstNameKana:
           type: string
           description: 名（かな）
-          example: たろう
         companyName:
           type: string
           description: 会社名
-          example: 株式会社テスト
         department:
           type: string
           description: 部署
-          example: 営業部
         position:
           type: string
           description: 役職
-          example: 部長
         subject:
           type: string
           description: 件名
-          example: お問い合わせについて
         body:
           type: string
           description: 本文
-          example: |
-            先日はご連絡いただきありがとうございます。
-            本件について、改めてご確認をお願いします。
-      required:
-        - lastName
-        - firstName
-        - lastNameKana
-        - firstNameKana
-        - companyName
-        - department
-        - position
-        - subject
-        - body
-  examples:
-    LoginRequest:
-      value:
-        username: example@hiroba1931.co.jp
-        email: password123
+    Order:
+      type: object
+      properties:
+        listID:
+          type: integer
+        detailID:
+          type: integer
+        originalFlg:
+          type: boolean
+        dealFlg:
+          type: boolean
+        orderFlg:
+          type: boolean
+        createUser:
+          $ref: '#/components/schemas/Email'
+        created:
+          $ref: '#/components/schemas/DateTime'
+    Corporate:
+      type: object
+      properties:
+        corporateID:
+          type: integer
+        corporateNumber:
+          type: integer
+        corporateName:
+          type: string
+        postCode:
+          type: integer
+        address:
+          type: string
+        til:
+          type: string
+        hpLink:
+          type: string
+        recuitFlg:
+          type: boolean
+    CorporateList:
+      type: object
+      properties:
+        corporateListID:
+          type: integer
+        corporateListName:
+          type: string
+        memo:
+          type: string
+        createUser:
+          $ref: '#/components/schemas/Email'
+        created:
+          $ref: '#/components/schemas/DateTime'
+        condition:
+          type: string
+        uploadFlg:
+          type: boolean
+        numOfCorporates:
+          type: integer
+          description: 企業リストに含まれる法人番号付与済みの企業数
+    CorporateListArray:
+      type: array
+      items:
+        $ref: '#/components/schemas/CorporateList'
+    CreateCorporateListRequest:
+      type: object
+      properties:
+        corporateListName:
+          type: string
+        memo:
+          type: string
+        condition:
+          type: string
+        uploadFlg:
+          type: boolean
+        corporateList:
+          type: array
+          items:
+            type: integer
+
+        
+    Email:
+      type: string
+      format: email
+    DateTime:
+      type: string
+      format: date-time
+        
 
