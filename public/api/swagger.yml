@@ -33,6 +33,10 @@ tags:
     description: 企業情報周辺のAPI
   - name: optout
     description: NG企業情報API
+  - name: messages
+    description: お問い合わせ内容API
+  - name: approach
+    description: フォーム送信周辺のAPI
 paths:
   /auth/login:
     post:
@@ -40,6 +44,7 @@ paths:
         - auth
       summary: ログイン
       description: ログイン画面でユーザー名とパスワードを入力してログインします。
+      operationId: login
       requestBody:
         $ref: '#/components/requestBodies/LoginRequest'
       responses:
@@ -48,169 +53,87 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Pet'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Pet'
-        '400':
-          description: Invalid ID supplied
-        '404':
-          description: Pet not found
-        '422':
-          description: Validation exception
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-  /auth/reset-password:
+                $ref: '#/components/schemas/LoginResponse'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /auth/reset-password/request:
     post:
       tags:
         - auth
       summary: パスワード再設定用のリンクを送信
       description: Add a new pet to the store
-      operationId: addPet
+      operationId: sendResetPasswordLink
       requestBody:
-        description: Create a new pet in the store
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Pet'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Pet'
+        $ref: '#/components/requestBodies/ResetPasswordRequest'
         required: true
       responses:
         '200':
           description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Pet'
         '400':
-          description: Invalid input
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
         '422':
           description: Validation exception
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-  /reset-password:
+  /auth/reset-password/confirm:
     post:
       tags:
         - auth
-      summary: Finds Pets by status
-      description: Multiple status values can be provided with comma separated strings
-      operationId: findPetsByStatus
-      parameters:
-        - name: status
-          in: query
-          description: Status values that need to be considered for filter
-          required: false
-          explode: true
-          schema:
-            type: string
-            default: available
-            enum:
-              - available
-              - pending
-              - sold
+      summary: パスワードを再設定する
+      description: 再設定リンクで提供されたトークンを使用して、新しいパスワードを設定します。
+      operationId: resetPasswordConfirm
+      requestBody:
+        $ref: '#/components/requestBodies/ResetPasswordConfirm'
+        required: true
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
+          description: Successful operation
         '400':
-          description: Invalid status value
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
   /orders/:
     get:
       tags:
         - orders
       summary: 全ての受注分析データを取得する
-      description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
-      operationId: findPetsByTags
+      description: 企業IDに紐づく全ての受注分析データを取得します。
+      operationId: getAllOrders
       parameters:
-        - name: tags
-          in: query
-          description: Tags to filter by
-          required: false
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
+        - $ref: '#/components/parameters/CompanyID'
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
-        '400':
-          description: Invalid tag value
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
-  /orders/{id}:
-    patch:
-      tags:
-        - orders
-      summary: 受注分析リストの名前とメモの内容を更新
-      description: Returns a single pet
-      operationId: getPetById
-      parameters:
-        - name: petId
-          in: path
-          description: ID of pet to return
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Pet'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Pet'
+          description: Successful operation
         '400':
           description: Invalid ID supplied
         '404':
           description: Pet not found
-      security:
-        - api_key: []
-        - petstore_auth:
-            - write:pets
-            - read:pets
+        '422':
+          description: Validation exception
+  /orders/{OrderID}:
+    patch:
+      tags:
+        - orders
+      summary: 受注分析リストの名前とメモの内容を更新
+      description: 受注分析リストのIDを指定して、名前とメモの内容を更新します。
+      operationId: getPetById
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+        - $ref: '#/components/parameters/OrderID'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateNameAndMemo'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
     get:
       tags:
         - orders
@@ -218,30 +141,17 @@ paths:
       description: ''
       operationId: updatePetWithForm
       parameters:
-        - name: petId
-          in: path
-          description: ID of pet that needs to be updated
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: name
-          in: query
-          description: Name of pet that needs to be updated
-          schema:
-            type: string
-        - name: status
-          in: query
-          description: Status of pet that needs to be updated
-          schema:
-            type: string
+        - $ref: '#/components/parameters/CompanyID'
+        - $ref: '#/components/parameters/OrderID'
       responses:
+        '200':
+          description: Successful operation
         '400':
-          description: Invalid input
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
   /orders/inport/:
     post:
       tags:
@@ -250,35 +160,18 @@ paths:
       description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
       operationId: findPetsByTags
       parameters:
-        - name: tags
-          in: query
-          description: Tags to filter by
-          required: false
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
+        - $ref: '#/components/parameters/CompanyID'
+      requestBody:
+        $ref: '#/components/requestBodies/InportCSV'
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
+          description: Successful operation
         '400':
-          description: Invalid tag value
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
     get:
       tags:
         - orders
@@ -286,35 +179,16 @@ paths:
       description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
       operationId: findPetsByTags
       parameters:
-        - name: tags
-          in: query
-          description: Tags to filter by
-          required: false
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
+        - $ref: '#/components/parameters/CompanyID'
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'          
-            application/xml:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Pet'
+          description: Successful operation
         '400':
-          description: Invalid tag value
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
   /orders/{id}/export:
     get:
       tags:
@@ -323,136 +197,57 @@ paths:
       description: ''
       operationId: uploadFile
       parameters:
-        - name: petId
-          in: path
-          description: ID of pet to update
-          required: true
-          schema:
-            type: integer
-            format: int64
-        - name: additionalMetadata
-          in: query
-          description: Additional Metadata
-          required: false
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
+        - $ref: '#/components/parameters/CompanyID'
+        - $ref: '#/components/parameters/OrderID'
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ApiResponse'
-      security:
-        - petstore_auth:
-            - write:pets
-            - read:pets
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
   /corporations/:
     get:
       tags:
         - corporations
-      summary: 企業情報取得
+      summary: 企業リスト情報一覧取得
       description: Retrieve a list of corporations based on search criteria.
       parameters:
-        - name: name
-          in: query
-          required: false
-          description: Filter by corporation name.
-          schema:
-            type: string
-            example: TechCorp
-        - name: status
-          in: query
-          required: false
-          description: Filter by corporation status.
-          schema:
-            type: string
-            enum: [active, inactive]
-            example: active
-        - name: page
-          in: query
-          required: false
-          description: Page number for pagination.
-          schema:
-            type: integer
-            example: 1
-        - name: size
-          in: query
-          required: false
-          description: Number of items per page.
-          schema:
-            type: integer
-            example: 10
-        - name: sort
-          in: query
-          required: false
-          description: Sort order.
-          schema:
-            type: string
-            example: name,asc
+        - $ref: '#/components/parameters/CompanyID'
       responses:
         '200':
-          description: A list of corporations that match the search criteria.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          example: 123
-                        name:
-                          type: string
-                          example: TechCorp
-                        status:
-                          type: string
-                          example: active
-                  page:
-                    type: integer
-                    example: 1
-                  size:
-                    type: integer
-                    example: 10
-                  total:
-                    type: integer
-                    example: 100
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
     post:
       tags:
         - corporations
       summary: 企業リスト作成
       description: Place a new order in the store
       operationId: placeOrder
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Order'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Order'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Order'
+              type: object
+              properties:
+                corporatelist:
+                  type: string
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Order'
+          description: Successful operation
         '400':
-          description: Invalid input
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
         '422':
           description: Validation exception
   /corporations/seach/:
@@ -462,73 +257,28 @@ paths:
       summary: 企業情報検索 ※NG企業検索にも利用
       description: Retrieve a list of corporations based on search criteria.
       parameters:
-        - name: name
-          in: query
-          required: false
-          description: Filter by corporation name.
-          schema:
-            type: string
-            example: TechCorp
-        - name: status
-          in: query
-          required: false
-          description: Filter by corporation status.
-          schema:
-            type: string
-            enum: [active, inactive]
-            example: active
-        - name: page
-          in: query
-          required: false
-          description: Page number for pagination.
-          schema:
-            type: integer
-            example: 1
-        - name: size
-          in: query
-          required: false
-          description: Number of items per page.
-          schema:
-            type: integer
-            example: 10
-        - name: sort
-          in: query
-          required: false
-          description: Sort order.
-          schema:
-            type: string
-            example: name,asc
+        - $ref: '#/components/parameters/CompanyID'
+        - $ref: '#/components/parameters/CorporateNumber'
+        - $ref: '#/components/parameters/CorporateName'
+        - $ref: '#/components/parameters/SalesCode'
+        - $ref: '#/components/parameters/EmployeeNumberCode'
+        - $ref: '#/components/parameters/EstablishYear'
+        - $ref: '#/components/parameters/IndustryCode'
+        - $ref: '#/components/parameters/PrefectureCode'
+        - $ref: '#/components/parameters/CapitalCode'
+        - $ref: '#/components/parameters/ScenarioCode'
+        - $ref: '#/components/parameters/RecruitCode'
+        - $ref: '#/components/parameters/AverageAgeCode'
+        - $ref: '#/components/parameters/PvCountCode'
       responses:
         '200':
-          description: A list of corporations that match the search criteria.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          example: 123
-                        name:
-                          type: string
-                          example: TechCorp
-                        status:
-                          type: string
-                          example: active
-                  page:
-                    type: integer
-                    example: 1
-                  size:
-                    type: integer
-                    example: 10
-                  total:
-                    type: integer
-                    example: 100
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
   /corporations/inport/:
     post:
       tags:
@@ -536,99 +286,33 @@ paths:
       summary: 企業リストをアップロード ※NG企業にも利用
       description: Retrieve a list of corporations based on search criteria.
       parameters:
-        - name: name
-          in: query
-          required: false
-          description: Filter by corporation name.
-          schema:
-            type: string
-            example: TechCorp
-        - name: status
-          in: query
-          required: false
-          description: Filter by corporation status.
-          schema:
-            type: string
-            enum: [active, inactive]
-            example: active
-        - name: page
-          in: query
-          required: false
-          description: Page number for pagination.
-          schema:
-            type: integer
-            example: 1
-        - name: size
-          in: query
-          required: false
-          description: Number of items per page.
-          schema:
-            type: integer
-            example: 10
-        - name: sort
-          in: query
-          required: false
-          description: Sort order.
-          schema:
-            type: string
-            example: name,asc
+        - $ref: '#/components/parameters/CompanyID'
+      requestBody:
+        $ref: '#/components/requestBodies/InportCSV'
       responses:
         '200':
-          description: A list of corporations that match the search criteria.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          example: 123
-                        name:
-                          type: string
-                          example: TechCorp
-                        status:
-                          type: string
-                          example: active
-                  page:
-                    type: integer
-                    example: 1
-                  size:
-                    type: integer
-                    example: 10
-                  total:
-                    type: integer
-                    example: 100
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
     get:
       tags:
         - corporations
       summary: 企業リストcsvテンプレートをダウンロード ※NG企業にも利用
       description: Place a new order in the store
       operationId: placeOrder
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Order'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Order'
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Order'
+          description: Successful operation
         '400':
-          description: Invalid input
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
         '422':
           description: Validation exception
   /corporations/{id}:
@@ -639,27 +323,18 @@ paths:
       description: For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.
       operationId: getOrderById
       parameters:
-        - name: orderId
-          in: path
-          description: ID of order that needs to be fetched
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/CompanyID'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateNameAndMemo'
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Order'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Order'
+          description: Successful operation
         '400':
           description: Invalid ID supplied
         '404':
-          description: Order not found
+          description: Pet not found
+        '422':
+          description: Validation exception
     get:
       tags:
         - corporations
@@ -667,27 +342,17 @@ paths:
       description: For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.
       operationId: getOrderById
       parameters:
-        - name: orderId
-          in: path
-          description: ID of order that needs to be fetched
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/CompanyID'
+        - $ref: '#/components/parameters/CoporateListID'
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Order'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Order'
+          description: Successful operation
         '400':
           description: Invalid ID supplied
         '404':
-          description: Order not found
+          description: Pet not found
+        '422':
+          description: Validation exception
   /corporations/{id}/export:
     get:
       tags:
@@ -695,28 +360,18 @@ paths:
       summary: 特定の企業情報をcsv形式でエクスポート
       description: This can only be done by the logged in user.
       operationId: createUser
-      requestBody:
-        description: Created user object
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/User'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/User'
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+        - $ref: '#/components/parameters/CoporateListID'
       responses:
-        default:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
   /corporations/detail/{id}:
     get:
       tags:
@@ -724,25 +379,18 @@ paths:
       summary: 企業の詳細情報取得
       description: Creates list of users with given input array
       operationId: createUsersWithListInput
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/User'
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+        - $ref: '#/components/parameters/CoporateID'
       responses:
         '200':
           description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
   /optout/:
     post:
       tags:
@@ -750,99 +398,33 @@ paths:
       summary: NG企業を検索結果から登録
       description: Retrieve a list of corporations based on search criteria.
       parameters:
-        - name: name
-          in: query
-          required: false
-          description: Filter by corporation name.
-          schema:
-            type: string
-            example: TechCorp
-        - name: status
-          in: query
-          required: false
-          description: Filter by corporation status.
-          schema:
-            type: string
-            enum: [active, inactive]
-            example: active
-        - name: page
-          in: query
-          required: false
-          description: Page number for pagination.
-          schema:
-            type: integer
-            example: 1
-        - name: size
-          in: query
-          required: false
-          description: Number of items per page.
-          schema:
-            type: integer
-            example: 10
-        - name: sort
-          in: query
-          required: false
-          description: Sort order.
-          schema:
-            type: string
-            example: name,asc
+        - $ref: '#/components/parameters/CompanyID'
+      requestBody:
+        $ref: '#/components/requestBodies/RemoveNGCoporates'
       responses:
         '200':
-          description: A list of corporations that match the search criteria.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          example: 123
-                        name:
-                          type: string
-                          example: TechCorp
-                        status:
-                          type: string
-                          example: active
-                  page:
-                    type: integer
-                    example: 1
-                  size:
-                    type: integer
-                    example: 10
-                  total:
-                    type: integer
-                    example: 100
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
     get:
       tags:
         - optout
       summary: NG企業一覧取得
       description: Place a new order in the store
       operationId: placeOrder
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Order'
-          application/xml:
-            schema:
-              $ref: '#/components/schemas/Order'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/Order'
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Order'
+          description: Successful operation
         '400':
-          description: Invalid input
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
         '422':
           description: Validation exception
   /optout/{id}:
@@ -853,27 +435,187 @@ paths:
       description: For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.
       operationId: getOrderById
       parameters:
-        - name: orderId
+        - $ref: '#/components/parameters/CompanyID'
+        - name: CoporateID
           in: path
-          description: ID of order that needs to be fetched
           required: true
+          description: 企業データの一意の識別子
           schema:
             type: integer
-            format: int64
+            example: 123
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Order'          
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Order'
+          description: Successful operation
         '400':
           description: Invalid ID supplied
         '404':
-          description: Order not found
+          description: Pet not found
+        '422':
+          description: Validation exception
+  /messages:
+    get:
+      tags:
+        - messages
+      summary: メッセージ一覧取得
+      description: Retrieve a list of messages based on search criteria.
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
+    post:
+      tags:
+        - messages
+      summary: お問い合わせ情報の送信
+      description: 指定された情報を基にお問い合わせを登録します。
+      operationId: createMessage
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+      requestBody:
+        $ref: '#/components/requestBodies/CreateMessage'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
+    delete:
+      tags:
+        - messages
+      summary: メッセージ削除
+      description: For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.
+      operationId: deleteMessage
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+        - name: MessageID
+          in: path
+          required: true
+          description: メッセージデータの一意の識別子
+          schema:
+            type: integer
+            example: 123
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
+  /approach:
+    get:
+      tags:
+        - approach
+      summary: フォーム送信一覧取得
+      description: Retrieve a list of messages based on search criteria.
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+        - name: corporate_name
+          in: query
+          required: false
+          description: 企業名
+          schema:
+            type: string
+            example: 株式会社テスト
+        - name: start_date
+          in: query
+          required: false
+          description: 開始日
+          schema:
+            type: string
+            format: date
+            example: 2021-01-01
+        - name: end_date
+          in: query
+          required: false
+          description: 終了日
+          schema:
+            type: string
+            format: date
+            example: 2021-12-31
+        - name: status
+          in: query
+          required: false
+          description: ステータス
+          schema:
+            type: integer
+            example: 1
+        - name: coporate_list_id
+          in: query
+          required: false
+          description: 企業名
+          schema:
+            type: integer
+            example: 64
+        - name: message_id
+          in: query
+          required: false
+          description: メッセージID
+          schema:
+            type: integer
+            example: 37
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
+    post: 
+      tags:
+        - approach
+      summary: フォーム送信情報の送信
+      description: 指定された情報を基にフォーム送信情報を登録します。
+      operationId: sendApproach
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                coporate_list_id:
+                  type: array
+                  items:
+                    type: integer
+                  example: [64, 78]
+                optout_list_id:
+                  type: array
+                  items:
+                    type: integer
+                  example: [64, 89]
+                message_id:
+                  type: integer
+                  example: 37
+                status:
+                  type: integer
+                  example: 1
+              required:
+                - coporate_list_id
+                - optout_list_id
+                - message_id
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
 components:
   requestBodies:
     LoginRequest:
@@ -884,17 +626,261 @@ components:
           examples:
             LoginRequest:
               $ref: '#/components/examples/LoginRequest'
-
-  responses:
-    LoginResponse:
-      description: ログイン成功時のレスポンス
+    ResetPasswordRequest:
       content:
         application/json:
           schema:
             type: object
-          example:
-            LoginResponse:
-              token: 1234567890abcdef
+            properties:
+              email:
+                type: string
+                format: email
+                example: user@example.com
+                description: パスワード再設定用リンクを送信するユーザーのメールアドレス。
+    ResetPasswordConfirm:
+      description: 新しいパスワードとトークンを送信します。
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              token:
+                type: string
+                description: 再設定リンクに含まれるトークン。
+                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+              new_password:
+                type: string
+                format: password
+                description: 新しいパスワード。
+                example: "NewSecurePassword123!"
+    UpdateNameAndMemo:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                example: "Updated Name"
+              memo:
+                type: string
+                example: "Updated Memo"
+    InportCSV:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              csvData:
+                type: string
+                format: base64
+                description: Base64エンコードされたCSVファイルの内容。
+            required:
+              - csvData
+            example:
+              csvData: "Q29sdW1uMSxDb2x1bW4yLENvbHVtbjMKRGF0YTEsRGF0YTIsRGF0YTMK"
+    RemoveNGCoporates:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              coporateid:
+                type: integer
+            required:
+              - coporateid
+            example:
+              coporateid: 53
+    CreateMessage:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MessageDetails'
+  parameters:
+    CompanyID:
+      name: CompanyID
+      in: header
+      required: true
+      description: 所属会社の一意の識別子
+      schema:
+        type: integer
+        example: 123
+    OrderID:
+      name: OrderID
+      in: path
+      required: true
+      description: 受注データの一意の識別子
+      schema:
+        type: integer
+        example: 123
+    CoporateListID:
+      name: CorporateListID
+      in: path
+      required: true
+      description: 企業リストデータの一意の識別子
+      schema:
+        type: integer
+        example: 123
+    CoporateID:
+      name: CorporateID
+      in: path
+      required: true
+      description: 企業データの一意の識別子
+      schema:
+        type: integer
+        example: 123
+    CorporateNumber:
+      name: corporate_number
+      in: query
+      required: false
+      description: 企業番号
+      schema:
+        type: string
+      example:
+        $ref: '#/components/examples/CorporateNumberExample'
+
+    CorporateName:
+      name: corporate_name
+      in: query
+      required: false
+      description: 企業名
+      schema:
+        type: string
+      example:
+        $ref: '#/components/examples/CorporateNameExample'
+
+    SalesCode:
+      name: sales_code
+      in: query
+      required: false
+      description: 売上
+      schema:
+        type: array
+        items:
+          type: integer
+      example:
+        $ref: '#/components/examples/SalesCodeExample'
+
+    EmployeeNumberCode:
+      name: employee_number_code
+      in: query
+      required: false
+      description: 従業員数
+      schema:
+        type: array
+        items:
+          type: integer
+      example:
+        $ref: '#/components/examples/EmployeeNumberCodeExample'
+
+    EstablishYear:
+      name: establish_year
+      in: query
+      required: false
+      description: 設立年
+      schema:
+        type: array
+        items:
+          type: integer
+      example:
+        $ref: '#/components/examples/EstablishYearExample'
+
+    IndustryCode:
+      name: industry_code
+      in: query
+      required: false
+      description: 業種コード
+      schema:
+        type: array
+        items:
+          type: integer
+      example:
+        $ref: '#/components/examples/IndustryCodeExample'
+
+    PrefectureCode:
+      name: prefecture_code
+      in: query
+      required: false
+      description: 都道府県コード
+      schema:
+        type: array
+        items:
+          type: integer
+        maxLength: 2
+      example:
+        $ref: '#/components/examples/PrefectureCodeExample'
+
+    CapitalCode:
+      name: capital_code
+      in: query
+      required: false
+      description: 資本金
+      schema:
+        type: array
+        items:
+          type: integer
+      example:
+        $ref: '#/components/examples/CapitalCodeExample'
+
+    ScenarioCode:
+      name: scenario_code
+      in: query
+      required: false
+      description: シナリオコード
+      schema:
+        type: array
+        items:
+          type: integer
+      example:
+        $ref: '#/components/examples/ScenarioCodeExample'
+
+    RecruitCode:
+      name: recuit_code
+      in: query
+      required: false
+      description: 採用コード
+      schema:
+        type: array
+        items:
+          type: integer
+      example:
+        $ref: '#/components/examples/RecruitCodeExample'
+
+    AverageAgeCode:
+      name: average_age_code
+      in: query
+      required: false
+      description: 平均年齢
+      schema:
+        type: array
+        items:
+          type: integer
+      example:
+        $ref: '#/components/examples/AverageAgeCodeExample'
+
+    PvCountCode:
+      name: pv_count_code
+      in: query
+      required: false
+      description: PV数
+      schema:
+        type: array
+        items:
+          type: integer
+      example:
+        $ref: '#/components/examples/PvCountCodeExample'
+  responses:
+    InternalServerError:
+      description: サーバー内部エラー
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                description: エラーメッセージ
+                example: "サーバーエラーが発生しました。管理者にお問い合わせください。"
   schemas:
     LoginRequest:
       type: object
@@ -902,10 +888,68 @@ components:
         - username
         - password
       properties:
-        username:
+        user_name:
           type: string
         password:
           type: string
+    LoginResponse:
+      type: object
+      properties:
+        company_id:
+          type: string
+          description: 所属会社の一意の識別子
+          example: 123
+    MessageDetails:
+      type: object
+      properties:
+        lastName:
+          type: string
+          description: 姓
+          example: 山田
+        firstName:
+          type: string
+          description: 名
+          example: 太郎
+        lastNameKana:
+          type: string
+          description: 姓（かな）
+          example: やまだ
+        firstNameKana:
+          type: string
+          description: 名（かな）
+          example: たろう
+        companyName:
+          type: string
+          description: 会社名
+          example: 株式会社テスト
+        department:
+          type: string
+          description: 部署
+          example: 営業部
+        position:
+          type: string
+          description: 役職
+          example: 部長
+        subject:
+          type: string
+          description: 件名
+          example: お問い合わせについて
+        body:
+          type: string
+          description: 本文
+          example: |
+            先日はご連絡いただきありがとうございます。
+            本件について、改めてご確認をお願いします。
+      required:
+        - lastName
+        - firstName
+        - lastNameKana
+        - firstNameKana
+        - companyName
+        - department
+        - position
+        - subject
+        - body
   examples:
     LoginRequest:
       value:
