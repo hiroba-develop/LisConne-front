@@ -1,0 +1,100 @@
+  examples:
+    LoginRequest:
+      value:
+        username: example@hiroba1931.co.jp
+        email: password123
+    SuccessfulOperation:
+      value:
+        code: 200
+        message: "Successful operation"
+    BadRequestError:
+      value:
+        code: 400
+        message: "BadRequest"
+    NotAuthorizedError:
+      value:
+        code: 401
+        message: "Not Authorized"
+    InternalServerError:
+      value:
+        code: 500
+        message: "Internal Server Error"
+    GetAllCorporateListArrayResponse:
+      summary: A sample list of corporate lists
+      value:
+        - corporateListID: 1
+          corporateListName: "Example List 1"
+          memo: "This is a memo for list 1"
+          createUser: "user1@example.com"
+          created: "2024-12-15T10:00:00.000Z"
+          condition: "Condition A"
+          uploadFlg: true
+          numOfCorporates: 15
+        - corporateListID: 2
+          corporateListName: "Example List 2"
+          memo: "This is a memo for list 2"
+          createUser: "user2@example.com"
+          created: "2024-12-14T12:30:00.000Z"
+          condition: "Condition B"
+          uploadFlg: false
+          numOfCorporates: 20
+        - corporateListID: 3
+          corporateListName: "Example List 3"
+          memo: "This is a memo for list 3"
+          createUser: "user3@example.com"
+          created: "2024-12-13T15:45:00.000Z"
+          condition: "Condition C"
+          uploadFlg: true
+          numOfCorporates: 25
+        - corporateListID: 4
+          corporateListName: "Example List 4"
+          memo: "This is a memo for list 4"
+          createUser: "user4@example.com"
+          created: "2024-12-12T18:20:00.000Z"
+          condition: "Condition D"
+          uploadFlg: false
+          numOfCorporates: 30
+    SearchCorporateResponse:
+      summary: A list of sample corporate data
+      value:
+        - corporateID: 1
+          corporateNumber: 1234567890
+          corporateName: "Example Corp 1"
+          postCode: 1000001
+          address: "123 Example Street, City A"
+          telNumber: "03-1234-5678"
+          hpLink: "https://example1.com"
+          recuitFlg: true
+        - corporateID: 2
+          corporateNumber: 2345678901
+          corporateName: "Example Corp 2"
+          postCode: 2000002
+          address: "456 Example Avenue, City B"
+          telNumber: "06-2345-6789"
+          hpLink: "https://example2.com"
+          recuitFlg: false
+        - corporateID: 3
+          corporateNumber: 3456789012
+          corporateName: "Example Corp 3"
+          postCode: 3000003
+          address: "789 Example Road, City C"
+          telNumber: "03-3456-7890"
+          hpLink: "https://example3.com"
+          recuitFlg: true
+        - corporateID: 4
+          corporateNumber: 4567890123
+          corporateName: "Example Corp 4"
+          postCode: 4000004
+          address: "101 Example Blvd, City D"
+          telNumber: "06-4567-8901"
+          hpLink: "https://example4.com"
+          recuitFlg: false
+        - corporateID: 5
+          corporateNumber: 5678901234
+          corporateName: "Example Corp 5"
+          postCode: 5000005
+          address: "202 Example Lane, City E"
+          telNumber: "03-5678-9012"
+          hpLink: "https://example5.com"
+          recuitFlg: true
+

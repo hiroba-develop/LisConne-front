@@ -54,6 +54,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoginResponse'
+              example:
+                companyID: 427
         '400':
           description: 'Bad Request'
           $ref: '#/components/responses/BadRequestError'
@@ -94,7 +96,7 @@ paths:
       description: 再設定リンクで提供されたトークンを使用して、新しいパスワードを設定します。
       operationId: resetPasswordConfirm
       requestBody:
-        $ref: '#/components/requestBodies/ResetPasswordConfirm'
+        $ref: '#/components/requestBodies/ResetPasswordConfirmRequest'
         required: true
       responses:
         '200':
@@ -121,7 +123,6 @@ paths:
       responses:
         '200':
           description: Successful operation
-
         '400':
           description: 'Bad Request'
           $ref: '#/components/responses/BadRequestError'
@@ -186,7 +187,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/CompanyID'
       requestBody:
-        $ref: '#/components/requestBodies/InportCSV'
+        $ref: '#/components/requestBodies/CSV'
       responses:
         '200':
           description: Successful operation
@@ -246,7 +247,8 @@ paths:
       tags:
         - corporations
       summary: 企業リスト情報一覧取得
-      description: Retrieve a list of corporations based on search criteria.
+      description: 企業リストを全て取得します。
+      operationId: getAllCorporateList
       parameters:
         - $ref: '#/components/parameters/CompanyID'
       responses:
@@ -255,7 +257,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CorporateListArray'
+                $ref: '#/components/schemas/GetAllCorporateListResponse'
+              examples:
+                GetAllCorporateListArrayResponse:
+                  $ref: './examples.yml#/examples/GetAllCorporateListArrayResponse'
         '400':
           description: 'Bad Request'
           $ref: '#/components/responses/BadRequestError'
@@ -269,21 +274,19 @@ paths:
       tags:
         - corporations
       summary: 企業リスト作成
-      description: Place a new order in the store
-      operationId: placeOrder
+      description: 企業リストを作成します。
+      operationId: createCorporateList
       parameters:
         - $ref: '#/components/parameters/CompanyID'
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                corporatelist:
-                  type: string
+              $ref: '#/components/schemas/CreateCorporateListRequest'
       responses:
         '200':
           description: Successful operation
+          $ref: '#/components/responses/SuccessfulOperation'
         '400':
           description: 'Bad Request'
           $ref: '#/components/responses/BadRequestError'
@@ -298,24 +301,117 @@ paths:
       tags: 
         - corporations
       summary: 企業情報検索 ※NG企業検索にも利用
-      description: Retrieve a list of corporations based on search criteria.
+      description: 検索条件をもとに企業情報を取得します。
+      operationId: searchCorporates
       parameters:
         - $ref: '#/components/parameters/CompanyID'
-        - $ref: '#/components/parameters/CorporateNumber'
-        - $ref: '#/components/parameters/CorporateName'
-        - $ref: '#/components/parameters/SalesCode'
-        - $ref: '#/components/parameters/EmployeeNumberCode'
-        - $ref: '#/components/parameters/EstablishYear'
-        - $ref: '#/components/parameters/IndustryCode'
-        - $ref: '#/components/parameters/PrefectureCode'
-        - $ref: '#/components/parameters/CapitalCode'
-        - $ref: '#/components/parameters/ScenarioCode'
-        - $ref: '#/components/parameters/RecruitCode'
-        - $ref: '#/components/parameters/AverageAgeCode'
-        - $ref: '#/components/parameters/PvCountCode'
+        - name: corporateNumber
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 123
+        - name: salesCode
+          in: query
+          required: false
+          description: 売上
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [3, 6]
+        - name: employeeNumberCode
+          in: query
+          required: false
+          description: 従業員数
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [4, 8]
+        - name: establishYear
+          in: query
+          required: false
+          description: 設立年
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [2, 6]
+        - name: industryCode
+          in: query
+          required: false
+          description: 業種コード
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [1, 6]
+        - name: prefectureCode
+          in: query
+          required: false
+          description: 都道府県コード
+          schema:
+            type: array
+            items:
+              type: integer
+            maxLength: 2
+          example: [3, 8]
+        - name: capitalCode
+          in: query
+          required: false
+          description: 資本金
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [1,5]
+        - name: scenarioCode
+          in: query
+          required: false
+          description: シナリオコード
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [3,8]
+        - name: recuitCode
+          in: query
+          required: false
+          description: 採用コード
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [6,9]
+        - name: averageAgeCode
+          in: query
+          required: false
+          description: 平均年齢
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [1,5]
+        - name: pvCountCode
+          in: query
+          required: false
+          description: PV数
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [2,3]
       responses:
         '200':
           description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Corporates'
+              examples:
+                SearchCorporateResponse:
+                  $ref: './examples.yml#/examples/SearchCorporateResponse'
         '400':
           description: 'Bad Request'
           $ref: '#/components/responses/BadRequestError'
@@ -330,14 +426,20 @@ paths:
       tags:
         - corporations
       summary: 企業リストをアップロード ※NG企業にも利用
-      description: Retrieve a list of corporations based on search criteria.
+      operationId: uploadCorporateList
+      description: テンプレートに従って作成した企業リストをアップロードします。
       parameters:
         - $ref: '#/components/parameters/CompanyID'
       requestBody:
-        $ref: '#/components/requestBodies/InportCSV'
+        $ref: '#/components/requestBodies/CSV'
       responses:
         '200':
           description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllCorporateListResponse'
+
         '400':
           description: 'Bad Request'
           $ref: '#/components/responses/BadRequestError'
@@ -351,13 +453,17 @@ paths:
       tags:
         - corporations
       summary: 企業リストcsvテンプレートをダウンロード ※NG企業にも利用
-      description: Place a new order in the store
+      description: テンプレートをダウンロードします。
       operationId: exportCorporateListTemplate
       parameters:
         - $ref: '#/components/parameters/CompanyID'
       responses:
         '200':
           description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CSV'
         '400':
           description: 'Bad Request'
           $ref: '#/components/responses/BadRequestError'
@@ -371,9 +477,9 @@ paths:
     patch:
       tags:
         - corporations
-      summary: 企業リストの名前とメモの内容を更新
-      description: For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.
-      operationId: getOrderById
+      summary: 企業リストの名前とメモの内容を追加・更新
+      description: 企業リストのIDを指定して、名前とメモの内容を追加・更新します。
+      operationId: upserteNameAndMemo
       parameters:
         - $ref: '#/components/parameters/CompanyID'
         - $ref: '#/components/parameters/CorporateListID'
@@ -704,6 +810,14 @@ components:
       schema:
         type: integer
         example: 123
+    CorporateID:
+      name: CorporateID
+      in: path
+      required: true
+      description: 企業データの一意の識別子
+      schema:
+        type: integer
+        example: 123
     OrderID:
       name: OrderID
       in: path
@@ -720,142 +834,6 @@ components:
       schema:
         type: integer
         example: 123
-    CorporateID:
-      name: CorporateID
-      in: path
-      required: true
-      description: 企業データの一意の識別子
-      schema:
-        type: integer
-        example: 123
-    CorporateNumber:
-      name: corporate_number
-      in: query
-      required: false
-      description: 企業番号
-      schema:
-        type: integer
-      example: 123
-
-    CorporateName:
-      name: corporate_name
-      in: query
-      required: false
-      description: 企業名
-      schema:
-        type: string
-      example: 株式会社test
-
-    SalesCode:
-      name: sales_code
-      in: query
-      required: false
-      description: 売上
-      schema:
-        type: array
-        items:
-          type: integer
-      example: [3, 6]
-
-    EmployeeNumberCode:
-      name: employee_number_code
-      in: query
-      required: false
-      description: 従業員数
-      schema:
-        type: array
-        items:
-          type: integer
-      example: [4, 8]
-
-    EstablishYear:
-      name: establish_year
-      in: query
-      required: false
-      description: 設立年
-      schema:
-        type: array
-        items:
-          type: integer
-      example: [2, 6]
-
-    IndustryCode:
-      name: industry_code
-      in: query
-      required: false
-      description: 業種コード
-      schema:
-        type: array
-        items:
-          type: integer
-      example: [1, 6]
-
-    PrefectureCode:
-      name: prefecture_code
-      in: query
-      required: false
-      description: 都道府県コード
-      schema:
-        type: array
-        items:
-          type: integer
-        maxLength: 2
-      example: [3, 8]
-
-    CapitalCode:
-      name: capital_code
-      in: query
-      required: false
-      description: 資本金
-      schema:
-        type: array
-        items:
-          type: integer
-      example: [1,5]
-
-    ScenarioCode:
-      name: scenario_code
-      in: query
-      required: false
-      description: シナリオコード
-      schema:
-        type: array
-        items:
-          type: integer
-      example: [3,8]
-
-    RecruitCode:
-      name: recuit_code
-      in: query
-      required: false
-      description: 採用コード
-      schema:
-        type: array
-        items:
-          type: integer
-      example: [6,9]
-
-    AverageAgeCode:
-      name: average_age_code
-      in: query
-      required: false
-      description: 平均年齢
-      schema:
-        type: array
-        items:
-          type: integer
-      example: [1,5]
-
-    PvCountCode:
-      name: pv_count_code
-      in: query
-      required: false
-      description: PV数
-      schema:
-        type: array
-        items:
-          type: integer
-      example: [2,3]
   requestBodies:
     LoginRequest:
       content:
@@ -864,56 +842,34 @@ components:
             $ref: '#/components/schemas/LoginRequest'
           examples:
             LoginRequest:
-              $ref: '#/components/examples/LoginRequest'
+              $ref: './examples.yml#/examples/LoginRequest'
     ResetPasswordRequest:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              email:
-                type: string
-                format: email
-                example: user@example.com
-                description: パスワード再設定用リンクを送信するユーザーのメールアドレス。
-    ResetPasswordConfirm:
+            $ref: '#/components/schemas/Email'
+          example:
+            email: 'example@hiroba1931.co.jp'
+
+    ResetPasswordConfirmRequest:
       description: 新しいパスワードとトークンを送信します。
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              token:
-                type: string
-                description: 再設定リンクに含まれるトークン。
-                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-              new_password:
-                type: string
-                format: password
-                description: 新しいパスワード。
-                example: "NewSecurePassword123!"
+            $ref: '#/components/schemas/ResetPasswordConfirm'
+          example:
+            token: 'example'
+            newPassword: 'password123' 
     UpdateNameAndMemo:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              name:
-                type: string
-                example: "Updated Name"
-              memo:
-                type: string
-                example: "Updated Memo"
-    InportCSV:
+            $ref: '#/components/schemas/UpserteNameAndMemo'
+    CSV:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              csvData:
-                type: string
-                format: base64
-                description: Base64エンコードされたCSVファイルの内容。
+            $ref: '#/components/schemas/CSV'
             required:
               - csvData
             example:
@@ -942,42 +898,58 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ResponseStatus'
-            example:
-              code: 200
-              message: "Successful operation"
+          examples:
+            SuccessfulOperation:
+              $ref: './examples.yml#/examples/SuccessfulOperation'
     BadRequestError:
       description: "無効なリクエストが送信された場合に返されるエラーメッセージ"
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ResponseStatus'
-            example:
-              code: 400
-              message: "BadRequest"
+          examples:
+            BadRequestError:
+              $ref: './examples.yml#/examples/BadRequestError'
     NotAuthorizedError:
       description: "ユーザーが認証されていない場合に返されるエラーメッセージ"
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ResponseStatus'
-            example:
-              code: 401
-              message: "Not Authorized"
+          examples:
+            NotAuthorizedError:
+              $ref: './examples.yml#/examples/NotAuthorizedError'
     InternalServerError:
       description: サーバー内部でエラーが発生した場合に返されるエラーメッセージ
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ResponseStatus'
-            example:
-              code: 500
-              message: "Internal Server Error"  
-  examples:
-    LoginRequest:
-      value:
-        username: example@hiroba1931.co.jp
-        email: password123
+          examples:
+            InternalServerError:
+              $ref: './examples.yml#/examples/InternalServerError' 
   schemas:
+    ResetPasswordConfirm:
+      type: object
+      required:
+        - token
+        - newPassword
+      properties:
+        token:
+          type: string
+        newPassword:
+          type: string
+          format: password
+    UpserteNameAndMemo:
+      type: object
+      required:
+        - name
+        - memo
+      properties:
+        name:
+          type: string
+        memo:
+          type: string
     ResponseStatus:
       type: object
       required:
@@ -988,22 +960,27 @@ components:
           type: integer
         message:
           type: string
+
     LoginRequest:
       type: object
       required:
-        - username
+        - userName
         - password
       properties:
-        user_name:
+        userName:
           type: string
         password:
           type: string
+
     LoginResponse:
       type: object
+      required:
+        - companyID
       properties:
-        company_id:
+        companyID:
           type: string
           description: 所属会社の一意の識別子
+
     MessageDetails:
       type: object
       properties:
@@ -1051,8 +1028,21 @@ components:
           $ref: '#/components/schemas/Email'
         created:
           $ref: '#/components/schemas/DateTime'
+    Corporates:
+      type: array
+      items:
+        $ref: '#/components/schemas/Corporate'
     Corporate:
       type: object
+      required:
+        - corporateID
+        - corporateNumber
+        - corporateName
+        - postCode
+        - address
+        - telNumber
+        - hpLink
+        - recuitFlg
       properties:
         corporateID:
           type: integer
@@ -1064,7 +1054,7 @@ components:
           type: integer
         address:
           type: string
-        til:
+        telNumber:
           type: string
         hpLink:
           type: string
@@ -1090,12 +1080,18 @@ components:
         numOfCorporates:
           type: integer
           description: 企業リストに含まれる法人番号付与済みの企業数
-    CorporateListArray:
+    GetAllCorporateListResponse:
       type: array
       items:
         $ref: '#/components/schemas/CorporateList'
     CreateCorporateListRequest:
       type: object
+      required:
+        - corporateListName
+        - memo
+        - condition
+        - uploadFlg
+        - corporateList
       properties:
         corporateListName:
           type: string
@@ -1108,14 +1104,17 @@ components:
         corporateList:
           type: array
           items:
-            type: integer
-
-        
+            type: integer 
     Email:
       type: string
       format: email
     DateTime:
       type: string
       format: date-time
-        
-
+    CSV:
+      type: object
+      properties:
+        csvData:
+          type: string
+          format: base64
+          description: Base64エンコードされたCSVファイルの内容。
