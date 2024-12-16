@@ -867,7 +867,7 @@ components:
             $ref: '#/components/schemas/UpserteNameAndMemo'
     CSV:
       content:
-        application/json:
+        text/csv:
           schema:
             $ref: '#/components/schemas/CSV'
             required:
