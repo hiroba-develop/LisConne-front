@@ -1,50 +1,49 @@
 # React + TypeScript + Vite
+## 使用技術
+- Vite: 高速なビルドツール。
+- React: ユーザーインターフェースを構築するためのライブラリ。
+- React Router: 宣言型のルーティングライブラリ。
+- TypeScript: 型安全な JavaScript。
+- Prism: モックサーバー構築ツール
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 📂 ディレクトリ構成
+#### ※コンポーネントに関しては扱う情報ごとにディレクトリを分ける
+#### SideBarディレクトリに`SideBar.tsx`と`SideBar.css`のようにViewと対応するCSSファイルをセットで格納する
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```plaintext
+src/
+├── api/                 # 自動生成されたAPI用の型とロジック(基本的に編集しない)
+├── assets/              # 画像やフォント用などの静的ファイル
+├── components/          # UIコンポーネント
+├── pages/               # Routerで呼び出すページコンポーネント
+├── router/              # React Router設定
+├── hooks/               # カスタムフック
+├── styles/              # スタイリング
+├── utils/               # ユーティリティ関数
+├── App.tsx              # アプリケーションコンポーネント
+├── main.tsx             # Viteエントリーポイント
+├── index.html           # HTMLエントリーポイント
+└── design/              # 宗像さんのデザイン実装用ディレクトリ  
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## ブランチ運用方法
+| ブランチ名 | 用途 | マージ先 |
+| --- | --- | --- |
+| `main` | 本番環境用のブランチ | なし |
+| `develop` | 開発用のブランチ | master |
+| `feature/*` | 新機能開発用のブランチ | develop |
+| `bugfix/*` | バグ修正用のブランチ | develop |
+| `hotfix/*` | 緊急修正用のブランチ | develop |
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+## インストール手順
+[開発環境構築マニュアル](https://docs.google.com/spreadsheets/d/1X5qMlt_0mKLG2FQHRtqjRbILLWA3pFve/edit?gid=1179426110#gid=1179426110)から行う
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+## モックサーバー起動方法
+```bash
+prism mock ./public/api/swagger.yml
+```
+
+## 型生成方法(変更があった場合)
+```bash
+tsx generate-types.ts
 ```
