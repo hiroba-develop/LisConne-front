@@ -11,7 +11,7 @@
 
 ## 📂 ディレクトリ構成
 #### ※コンポーネントに関しては扱う情報ごとにディレクトリを分ける
-#### SideBarディレクトリに`SideBar.tsx`と`SideBar.css`のようにViewと対応するCSSファイルをセットで格納する
+#### styleコードが膨大になったら`SideBar.tsx`と`SideBarStyle.tsx`のようにViewと対応するCSSファイルをセットで格納する
 
 ```plaintext
 src/
