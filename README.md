@@ -1,10 +1,13 @@
 # React + TypeScript + Vite
 ## 使用技術
 - Vite: 高速なビルドツール。
-- React: ユーザーインターフェースを構築するためのライブラリ。
-- React Router: 宣言型のルーティングライブラリ。
-- TypeScript: 型安全な JavaScript。
+- React: ユーザーインターフェースを構築するためのライブラリ
+- React Router: 宣言型のルーティングライブラリ
+- TypeScript: 型安全な JavaScript
+- Material UI: UIライブラリ
+- Emotion: CSS in JSスタイリングライブラリ
 - Prism: モックサーバー構築ツール
+- OpenAPI-TypeScript-CodeGen: SwaggerファイルからAPIモデルと関数を自動生成するライブラリ
 
 ## 📂 ディレクトリ構成
 #### ※コンポーネントに関しては扱う情報ごとにディレクトリを分ける
