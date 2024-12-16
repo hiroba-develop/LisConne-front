@@ -1,0 +1,1120 @@
+openapi: 3.0.3
+info:
+  title: Swagger Petstore - OpenAPI 3.0
+  description: |-
+    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
+    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
+    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
+    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+
+    _If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit > Load Petstore OAS 2.0` menu option!_
+    
+    Some useful links:
+    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
+    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://petstore3.swagger.io/api/v3
+tags:
+  - name: auth
+    description: ユーザーのログインやパスワード設定のAPI
+  - name: orders
+    description: 受注データ周辺のAPI
+  - name: corporations
+    description: 企業情報周辺のAPI
+  - name: optout
+    description: NG企業情報API
+  - name: messages
+    description: お問い合わせ内容API
+  - name: approach
+    description: フォーム送信周辺のAPI
+paths:
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: ログイン
+      description: ログイン画面でユーザー名とパスワードを入力してログインします。
+      operationId: login
+      requestBody:
+        $ref: '#/components/requestBodies/LoginRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+              example:
+                companyID: 427
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /auth/reset-password/request:
+    post:
+      tags:
+        - auth
+      summary: パスワード再設定用のリンクを送信
+      description: ユーザーのメールアドレスを入力して、パスワード再設定用のリンクを送信します。
+      operationId: sendResetPasswordLink
+      requestBody:
+        $ref: '#/components/requestBodies/ResetPasswordRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          $ref: '#/components/responses/SuccessfulOperation'
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /auth/reset-password/confirm:
+    post:
+      tags:
+        - auth
+      summary: パスワードを再設定する
+      description: 再設定リンクで提供されたトークンを使用して、新しいパスワードを設定します。
+      operationId: resetPasswordConfirm
+      requestBody:
+        $ref: '#/components/requestBodies/ResetPasswordConfirmRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          $ref: '#/components/responses/SuccessfulOperation'
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /orders/:
+    get:
+      tags:
+        - orders
+      summary: 全ての受注分析データを取得する
+      description: 企業IDに紐づく全ての受注分析データを取得します。
+      operationId: getAllOrders
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /orders/{OrderID}:
+    patch:
+      tags:
+        - orders
+      summary: 受注分析リストの名前とメモの内容を更新
+      description: 受注分析リストのIDを指定して、名前とメモの内容を更新します。
+      operationId: getPetById
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+        - $ref: '#/components/parameters/OrderID'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateNameAndMemo'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - orders
+      summary: 特定の受注データを取得
+      description: ''
+      operationId: updatePetWithForm
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+        - $ref: '#/components/parameters/OrderID'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /orders/inport/:
+    post:
+      tags:
+        - orders
+      summary: 受注分析データをアップロード
+      description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
+      operationId: InportOrdersData
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+      requestBody:
+        $ref: '#/components/requestBodies/CSV'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - orders
+      summary: 受注分析データテンプレートをダウンロード
+      description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
+      operationId: ExportOrdersTemplate
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /orders/{OrderID}/export:
+    get:
+      tags:
+        - orders
+      summary: 特定の受注分析データをcsv形式でエクスポート
+      description: ''
+      operationId: uploadFile
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+        - $ref: '#/components/parameters/OrderID'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /corporations/:
+    get:
+      tags:
+        - corporations
+      summary: 企業リスト情報一覧取得
+      description: 企業リストを全て取得します。
+      operationId: getAllCorporateList
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllCorporateListResponse'
+              examples:
+                GetAllCorporateListArrayResponse:
+                  $ref: './examples.yml#/examples/GetAllCorporateListArrayResponse'
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - corporations
+      summary: 企業リスト作成
+      description: 企業リストを作成します。
+      operationId: createCorporateList
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCorporateListRequest'
+      responses:
+        '200':
+          description: Successful operation
+          $ref: '#/components/responses/SuccessfulOperation'
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /corporations/seach/:
+    get:
+      tags: 
+        - corporations
+      summary: 企業情報検索 ※NG企業検索にも利用
+      description: 検索条件をもとに企業情報を取得します。
+      operationId: searchCorporates
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+        - name: corporateNumber
+          in: query
+          required: false
+          schema:
+            type: integer
+            example: 123
+        - name: salesCode
+          in: query
+          required: false
+          description: 売上
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [3, 6]
+        - name: employeeNumberCode
+          in: query
+          required: false
+          description: 従業員数
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [4, 8]
+        - name: establishYear
+          in: query
+          required: false
+          description: 設立年
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [2, 6]
+        - name: industryCode
+          in: query
+          required: false
+          description: 業種コード
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [1, 6]
+        - name: prefectureCode
+          in: query
+          required: false
+          description: 都道府県コード
+          schema:
+            type: array
+            items:
+              type: integer
+            maxLength: 2
+          example: [3, 8]
+        - name: capitalCode
+          in: query
+          required: false
+          description: 資本金
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [1,5]
+        - name: scenarioCode
+          in: query
+          required: false
+          description: シナリオコード
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [3,8]
+        - name: recuitCode
+          in: query
+          required: false
+          description: 採用コード
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [6,9]
+        - name: averageAgeCode
+          in: query
+          required: false
+          description: 平均年齢
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [1,5]
+        - name: pvCountCode
+          in: query
+          required: false
+          description: PV数
+          schema:
+            type: array
+            items:
+              type: integer
+          example: [2,3]
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Corporates'
+              examples:
+                SearchCorporateResponse:
+                  $ref: './examples.yml#/examples/SearchCorporateResponse'
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /corporations/inport/:
+    post:
+      tags:
+        - corporations
+      summary: 企業リストをアップロード ※NG企業にも利用
+      operationId: uploadCorporateList
+      description: テンプレートに従って作成した企業リストをアップロードします。
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+      requestBody:
+        $ref: '#/components/requestBodies/CSV'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllCorporateListResponse'
+
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - corporations
+      summary: 企業リストcsvテンプレートをダウンロード ※NG企業にも利用
+      description: テンプレートをダウンロードします。
+      operationId: exportCorporateListTemplate
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CSV'
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /corporations/{CorporateListID}:
+    patch:
+      tags:
+        - corporations
+      summary: 企業リストの名前とメモの内容を追加・更新
+      description: 企業リストのIDを指定して、名前とメモの内容を追加・更新します。
+      operationId: upserteNameAndMemo
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+        - $ref: '#/components/parameters/CorporateListID'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateNameAndMemo'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - corporations
+      summary: 企業詳細情報取得
+      description: For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.
+      operationId: getOrderById
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+        - $ref: '#/components/parameters/CorporateListID'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /corporations/{CorporateListID}/export:
+    get:
+      tags:
+        - corporations
+      summary: 特定の企業情報をcsv形式でエクスポート
+      description: This can only be done by the logged in user.
+      operationId: createUser
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+        - $ref: '#/components/parameters/CorporateListID'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /corporations/detail/{CorporateID}:
+    get:
+      tags:
+        - corporations
+      summary: 企業の詳細情報取得
+      description: Creates list of users with given input array
+      operationId: createUsersWithListInput
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+        - $ref: '#/components/parameters/CorporateID'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /optout/:
+    post:
+      tags:
+        - optout
+      summary: NG企業を検索結果から登録
+      description: Retrieve a list of corporations based on search criteria.
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+      requestBody:
+        $ref: '#/components/requestBodies/RemoveNGCorporates'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      tags:
+        - optout
+      summary: NG企業一覧取得
+      description: Place a new order in the store
+      operationId: getOptoutList
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /optout/{CorporateID}:
+    delete:
+      tags:
+        - optout
+      summary: NG企業一覧から削除
+      description: For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.
+      operationId: removeFromOptoutList
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+        - $ref: '#/components/parameters/CorporateID'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /messages:
+    get:
+      tags:
+        - messages
+      summary: メッセージ一覧取得
+      description: Retrieve a list of messages based on search criteria.
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
+    post:
+      tags:
+        - messages
+      summary: お問い合わせ情報の送信
+      description: 指定された情報を基にお問い合わせを登録します。
+      operationId: createMessage
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+      requestBody:
+        $ref: '#/components/requestBodies/CreateMessage'
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Pet not found
+        '422':
+          description: Validation exception
+  /messages/{MessageID}:
+    delete:
+      tags:
+        - messages
+      summary: メッセージ削除
+      description: For valid response try integer IDs with value <= 5 or > 10. Other values will generate exceptions.
+      operationId: deleteMessage
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+        - name: MessageID
+          in: path
+          required: true
+          description: メッセージデータの一意の識別子
+          schema:
+            type: integer
+            example: 123
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+  /approach:
+    get:
+      tags:
+        - approach
+      summary: フォーム送信一覧取得
+      description: Retrieve a list of messages based on search criteria.
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+        - name: corporate_name
+          in: query
+          required: false
+          description: 企業名
+          schema:
+            type: string
+            example: 株式会社テスト
+        - name: start_date
+          in: query
+          required: false
+          description: 開始日
+          schema:
+            type: string
+            format: date
+            example: 2021-01-01
+        - name: end_date
+          in: query
+          required: false
+          description: 終了日
+          schema:
+            type: string
+            format: date
+            example: 2021-12-31
+        - name: status
+          in: query
+          required: false
+          description: ステータス
+          schema:
+            type: integer
+            example: 1
+        - name: corporate_list_id
+          in: query
+          required: false
+          description: 企業名
+          schema:
+            type: integer
+            example: 64
+        - name: message_id
+          in: query
+          required: false
+          description: メッセージID
+          schema:
+            type: integer
+            example: 37
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+    post: 
+      tags:
+        - approach
+      summary: フォーム送信情報の送信
+      description: 指定された情報を基にフォーム送信情報を登録します。
+      operationId: sendApproach
+      parameters:
+        - $ref: '#/components/parameters/CompanyID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                corporate_list_id:
+                  type: array
+                  items:
+                    type: integer
+                  example: [64, 78]
+                optout_list_id:
+                  type: array
+                  items:
+                    type: integer
+                  example: [64, 89]
+                message_id:
+                  type: integer
+                  example: 37
+                status:
+                  type: integer
+                  example: 1
+              required:
+                - corporate_list_id
+                - optout_list_id
+                - message_id
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: 'Bad Request'
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          description: Not Authorized
+          $ref: '#/components/responses/NotAuthorizedError'
+        '500':
+          description: Internal Server Error
+          $ref: '#/components/responses/InternalServerError'
+components:
+  parameters:
+    CompanyID:
+      name: CompanyID
+      in: header
+      required: true
+      description: 所属会社の一意の識別子
+      schema:
+        type: integer
+        example: 123
+    CorporateID:
+      name: CorporateID
+      in: path
+      required: true
+      description: 企業データの一意の識別子
+      schema:
+        type: integer
+        example: 123
+    OrderID:
+      name: OrderID
+      in: path
+      required: true
+      description: 受注データの一意の識別子
+      schema:
+        type: integer
+        example: 123
+    CorporateListID:
+      name: CorporateListID
+      in: path
+      required: true
+      description: 企業リストデータの一意の識別子
+      schema:
+        type: integer
+        example: 123
+  requestBodies:
+    LoginRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoginRequest'
+          examples:
+            LoginRequest:
+              $ref: './examples.yml#/examples/LoginRequest'
+    ResetPasswordRequest:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Email'
+          example:
+            'example@hiroba1931.co.jp'
+
+    ResetPasswordConfirmRequest:
+      description: 新しいパスワードとトークンを送信します。
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResetPasswordConfirm'
+          example:
+            token: 'example'
+            newPassword: 'password123' 
+    UpdateNameAndMemo:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UpserteNameAndMemo'
+    CSV:
+      content:
+        text/csv:
+          schema:
+            $ref: '#/components/schemas/CSV'
+            required:
+              - csvData
+            example:
+              csvData: "Q29sdW1uMSxDb2x1bW4yLENvbHVtbjMKRGF0YTEsRGF0YTIsRGF0YTMK"
+    RemoveNGCorporates:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              corporateid:
+                type: integer
+            required:
+              - corporateid
+            example:
+              corporateid: 53
+    CreateMessage:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MessageDetails'
+  responses:
+    SuccessfulOperation:
+      description: 成功したリクエストが送信された場合に返されるエラーメッセージ
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseStatus'
+          examples:
+            SuccessfulOperation:
+              $ref: './examples.yml#/examples/SuccessfulOperation'
+    BadRequestError:
+      description: "無効なリクエストが送信された場合に返されるエラーメッセージ"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseStatus'
+          examples:
+            BadRequestError:
+              $ref: './examples.yml#/examples/BadRequestError'
+    NotAuthorizedError:
+      description: "ユーザーが認証されていない場合に返されるエラーメッセージ"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseStatus'
+          examples:
+            NotAuthorizedError:
+              $ref: './examples.yml#/examples/NotAuthorizedError'
+    InternalServerError:
+      description: サーバー内部でエラーが発生した場合に返されるエラーメッセージ
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResponseStatus'
+          examples:
+            InternalServerError:
+              $ref: './examples.yml#/examples/InternalServerError' 
+  schemas:
+    ResetPasswordConfirm:
+      type: object
+      required:
+        - token
+        - newPassword
+      properties:
+        token:
+          type: string
+        newPassword:
+          type: string
+          format: password
+    UpserteNameAndMemo:
+      type: object
+      required:
+        - name
+        - memo
+      properties:
+        name:
+          type: string
+        memo:
+          type: string
+    ResponseStatus:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+
+    LoginRequest:
+      type: object
+      required:
+        - userName
+        - password
+      properties:
+        userName:
+          type: string
+        password:
+          type: string
+
+    LoginResponse:
+      type: object
+      required:
+        - companyID
+      properties:
+        companyID:
+          type: string
+          description: 所属会社の一意の識別子
+
+    MessageDetails:
+      type: object
+      properties:
+        lastName:
+          type: string
+          description: 姓
+        firstName:
+          type: string
+          description: 名
+        lastNameKana:
+          type: string
+          description: 姓（かな）
+        firstNameKana:
+          type: string
+          description: 名（かな）
+        companyName:
+          type: string
+          description: 会社名
+        department:
+          type: string
+          description: 部署
+        position:
+          type: string
+          description: 役職
+        subject:
+          type: string
+          description: 件名
+        body:
+          type: string
+          description: 本文
+    Order:
+      type: object
+      properties:
+        listID:
+          type: integer
+        detailID:
+          type: integer
+        originalFlg:
+          type: boolean
+        dealFlg:
+          type: boolean
+        orderFlg:
+          type: boolean
+        createUser:
+          $ref: '#/components/schemas/Email'
+        created:
+          $ref: '#/components/schemas/DateTime'
+    Corporates:
+      type: array
+      items:
+        $ref: '#/components/schemas/Corporate'
+    Corporate:
+      type: object
+      required:
+        - corporateID
+        - corporateNumber
+        - corporateName
+        - postCode
+        - address
+        - telNumber
+        - hpLink
+        - recuitFlg
+      properties:
+        corporateID:
+          type: integer
+        corporateNumber:
+          type: integer
+        corporateName:
+          type: string
+        postCode:
+          type: integer
+        address:
+          type: string
+        telNumber:
+          type: string
+        hpLink:
+          type: string
+        recuitFlg:
+          type: boolean
+    CorporateList:
+      type: object
+      properties:
+        corporateListID:
+          type: integer
+        corporateListName:
+          type: string
+        memo:
+          type: string
+        createUser:
+          $ref: '#/components/schemas/Email'
+        created:
+          $ref: '#/components/schemas/DateTime'
+        condition:
+          type: string
+        uploadFlg:
+          type: boolean
+        numOfCorporates:
+          type: integer
+          description: 企業リストに含まれる法人番号付与済みの企業数
+    GetAllCorporateListResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/CorporateList'
+    CreateCorporateListRequest:
+      type: object
+      required:
+        - corporateListName
+        - memo
+        - condition
+        - uploadFlg
+        - corporateList
+      properties:
+        corporateListName:
+          type: string
+        memo:
+          type: string
+        condition:
+          type: string
+        uploadFlg:
+          type: boolean
+        corporateList:
+          type: array
+          items:
+            type: integer 
+    Email:
+      type: string
+      format: email
+    DateTime:
+      type: string
+      format: date-time
+    CSV:
+      type: object
+      properties:
+        csvData:
+          type: string
+          format: base64
+          description: Base64エンコードされたCSVファイルの内容。
