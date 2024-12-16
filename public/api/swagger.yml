@@ -849,7 +849,7 @@ components:
           schema:
             $ref: '#/components/schemas/Email'
           example:
-            email: 'example@hiroba1931.co.jp'
+            'example@hiroba1931.co.jp'
 
     ResetPasswordConfirmRequest:
       description: 新しいパスワードとトークンを送信します。

@@ -1,8 +1,8 @@
   examples:
     LoginRequest:
       value:
-        username: example@hiroba1931.co.jp
-        email: password123
+        userName: example@hiroba1931.co.jp
+        password: password123
     SuccessfulOperation:
       value:
         code: 200
