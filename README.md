@@ -11,7 +11,7 @@
 
 ## 📂 ディレクトリ構成
 #### ※コンポーネントに関しては扱う情報ごとにディレクトリを分ける
-#### styleコードが膨大になったら`SideBar.tsx`と`SideBarStyle.tsx`のようにViewと対応するCSSファイルをセットで格納する
+#### styleコードが膨大になったら`SideBar.tsx`と`SideBarStyle.tsx`のようにViewと対応するCSS　in JSファイルをセットで格納する
 
 ```plaintext
 src/
@@ -30,6 +30,7 @@ src/
 ```
 
 ## ブランチ運用方法
+#### featureブランチに関しては画面単位で切り出す
 | ブランチ名 | 用途 | マージ先 |
 | --- | --- | --- |
 | `main` | 本番環境用のブランチ | なし |
@@ -50,3 +51,21 @@ prism mock ./public/api/swagger.yml
 ```bash
 tsx generate-types.ts
 ```
+
+## コーディング規約
+- 意味のわからな変数名を使用しない
+- 拡張を揃える
+
+| **対象**                | **命名規則**              | **例**                              |
+|-------------------------|---------------------------|-------------------------------------|
+| **コンポーネント名**     | PascalCase               | `UserCard`, `OrderList`            |
+| **変数名**              | camelCase                | `userName`, `isLoggedIn`           |
+| **関数名**              | camelCase                | `fetchData`, `handleClick`         |
+| **Props の型名**         | PascalCase + `Props`     | `UserCardProps`, `ButtonProps`     |
+| **ステート変数名**       | camelCase + 状態の意味    | `userName`, `isLoading`            |
+| **カスタムフック**       | camelCase + `use` で始める | `useAuth`, `useFetchData`          |
+| **Context 名**          | PascalCase + `Context`   | `AuthContext`, `ThemeContext`      |
+| **Context プロバイダー**  | PascalCase + `Provider`  | `AuthProvider`, `ThemeProvider`    |
+| **定数**                | SCREAMING_SNAKE_CASE     | `API_BASE_URL`, `DEFAULT_TIMEOUT`  |
+| **CSS モジュールクラス名** | kebab-case               | `user-card`, `button-primary`      |
+
