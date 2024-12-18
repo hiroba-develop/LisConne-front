@@ -18,6 +18,7 @@ src/
 ├── api/                 # 自動生成されたAPI用の型とロジック(基本的に編集しない)
 ├── assets/              # 画像やフォント用などの静的ファイル
 ├── components/          # UIコンポーネント
+├── constants/           # 定数ファイル
 ├── pages/               # Routerで呼び出すページコンポーネント
 ├── router/              # React Router設定
 ├── hooks/               # カスタムフック
