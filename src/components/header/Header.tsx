@@ -2,6 +2,9 @@
 import React, { useState } from "react";
 import { AppBar, Toolbar, Typography, Menu, MenuItem, Grid2 } from "@mui/material";
 import { css } from "@emotion/react";
+import { useHandleNavigation } from "../../hooks/useHandleNavigation";
+import { useMachingPage } from "../../hooks/useMatchingPage";
+import routes from "../../constants/routes";
 
 const Header: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -10,7 +13,6 @@ const Header: React.FC = () => {
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
@@ -20,6 +22,9 @@ const Header: React.FC = () => {
     console.log("ログアウトが実行されました");
     // ログアウト処理をここに追加
   };
+
+  const handleNavigation = useHandleNavigation();
+  const isMatchingPage= useMachingPage();
 
   return (
     <>  
@@ -110,14 +115,13 @@ const Header: React.FC = () => {
       >
         <Toolbar
           css={css`
-            height: 8vh;
+            height: 100%;
             min-height: unset !important;
             padding: 0;
           `}
         >
           <Grid2
             container
-            spacing={4}
             alignItems="center"
             css={css`
               width: 100%;
@@ -127,45 +131,66 @@ const Header: React.FC = () => {
           >
             <Grid2
               size={2}
-              alignItems="center"
+              justifyItems="center"
+              css={css` 
+                height: 100%;
+              `}
             >
               <Typography
                 css={css`
                   font-size: 1rem;
                   cursor: pointer;
-                  color: #293440;
+                  height: 100%;
+                  display: flex;
+                  align-items: center;
+                  color: ${isMatchingPage([routes.CORPORATE_LIST_CREATE]) ? "#22C7C7" : "#293440"};
+                  border-bottom: 0.4vh solid ${isMatchingPage([routes.CORPORATE_LIST_CREATE]) ? "#22C7C7" : "#FFFFFF"};
                 `}
-                onClick={handleMenuOpen} // クリックでメニューを開く
+                onClick={() => handleNavigation(routes.CORPORATE_LIST_CREATE)}
               >
                 リスト作成
               </Typography>
             </Grid2>
             <Grid2
               size={2}
-              alignItems="center"
+              justifyItems="center"
+              css={css` 
+                height: 100%;
+              `}
             >
               <Typography
                 css={css`
                   font-size: 1rem;
                   cursor: pointer;
-                  color: #293440;
+                  height: 100%;
+                  display: flex;
+                  align-items: center;
+                  color: ${isMatchingPage([routes.CORPORATE_LIST, routes.CORPORATE_LIST_DETAIL]) ? "#22C7C7" : "#293440"};
+                  border-bottom: 0.4vh solid ${isMatchingPage([routes.CORPORATE_LIST, routes.CORPORATE_LIST_DETAIL]) ? "#22C7C7" : "#FFFFFF"};
                 `}
-                onClick={handleMenuOpen} // クリックでメニューを開く
+                onClick={() => handleNavigation(routes.CORPORATE_LIST)}
               >
                 リスト一覧
               </Typography>
             </Grid2>
             <Grid2
               size={2}
-              alignItems="center"
+              justifyItems="center"
+              css={css` 
+                height: 100%;
+              `}
             >
               <Typography
                 css={css`
                   font-size: 1rem;
                   cursor: pointer;
-                  color: #293440;
+                  height: 100%;
+                  display: flex;
+                  align-items: center;
+                  color: ${isMatchingPage([routes.OPT_OUT]) ? "#22C7C7" : "#293440"};
+                  border-bottom: 0.4vh solid ${isMatchingPage([routes.OPT_OUT]) ? "#22C7C7" : "#FFFFFF"};
                 `}
-                onClick={handleMenuOpen} // クリックでメニューを開く
+                onClick={() => handleNavigation(routes.OPT_OUT)}
               >
                 オプトアウト管理
               </Typography>
