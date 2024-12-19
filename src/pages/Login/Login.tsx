@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  ThemeProvider,
-  createTheme,
   Box,
+  Button,
   Card,
   CardContent,
+  Checkbox,
+  createTheme,
+  FormControlLabel,
   Typography,
   TextField,
-  Button,
-  Checkbox,
-  FormControlLabel,
+  ThemeProvider,
 } from "@mui/material";
 import "./Login.css";
-import LisConne from "../../assets/LisConne.png";
+import LisConne from "../../../public/icon.png";
+import LoginFooter from "../../components/LoginFooter/LoginFooter";
 
 const theme = createTheme({
   palette: {
@@ -86,7 +87,7 @@ const Login: React.FC = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
               <Link
-                to="/"
+                to="/reset-password/request"
                 style={{
                   color: "#22C7C7",
                   display: "block",
@@ -122,6 +123,7 @@ const Login: React.FC = () => {
           </CardContent>
         </Card>
       </Box>
+      <LoginFooter />
     </ThemeProvider>
   );
 };
