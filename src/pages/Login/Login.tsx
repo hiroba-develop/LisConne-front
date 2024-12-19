@@ -33,7 +33,7 @@ const Login: React.FC = () => {
   const loginSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log("Login attempt", { email, password, rememberMe });
-    // ここに実際の認証ロジックを追加します
+    // ログイン機能の実装
     navigate("/");
   };
   return (
